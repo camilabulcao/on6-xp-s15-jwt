@@ -1,7 +1,11 @@
+
+const jwt = require('jsonwebtoken')
 const passport = require ('passport')
 const LocalStrategy = require('passport-local').Strategy
+const BearerStrategy = require('passport-http-bearer').Strategy
 
 passport.use(
+
     new LocalStrategy({
         usernameField: 'email',
         passwordField: 'senha', 
@@ -17,5 +21,23 @@ passport.use(
 
         done(null, {})
 
+    })
+);
+
+passport.use(
+    new BearerStrategy((token,done)=>{
+        try{
+            //Fluxo feliz
+            const payload = jwt.verify(token, 'senha-secreta')
+            console.log(payload); //só para verificar o payload retornando
+            const usuario = {}; // = buscar no bd
+            done(null,usuario, {token: token});
+
+        
+        } catch(error){
+            //fluxo com erro
+            done(error);
+        }
+        
     })
 );
